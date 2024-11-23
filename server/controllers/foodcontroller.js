@@ -6,12 +6,16 @@ const addFood = async (req, res) => {
     const { name, calories } = req.body;
     const date = new Date().toISOString().split('T')[0]; // Use today's date
 
+    // Sanitize the name for consistent image file naming
+    const sanitizedName = name.trim().toLowerCase();
+
     // Create a new food entry
-    const food = await Food.create({
-      name,
+    await Food.create({
+      name: sanitizedName,
       calories,
       date,
       userId: req.user._id,
+      image: `${sanitizedName.replace(/\s+/g, '_')}.jpg`, // Auto-generate image name
     });
 
     res.redirect('/foodroutes'); // Redirect to the food list after successful creation
@@ -24,6 +28,8 @@ const addFood = async (req, res) => {
 const getFoods = async (req, res) => {
   try {
     const date = new Date().toISOString().split('T')[0]; // Get today's date
+
+    // Get all foods for the logged-in user for today's date
     const foods = await Food.find({ userId: req.user._id, date });
 
     const totalCalories = foods.reduce((sum, food) => sum + food.calories, 0);

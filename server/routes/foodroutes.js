@@ -43,7 +43,7 @@ router.post('/add', protect, async (req, res) => {
       calories,
       date: today,
       userId: req.user._id,
-      image: `${name.toLowerCase().replace(/\s+/g, '')}.jpg`, // Remove Spaces Completely
+      image: `${name.toLowerCase().replace(/\s+/g, '')}.jpg`, // Remove spaces completely
     });
 
     res.redirect('/foodroutes'); // Redirect back to the dashboard
