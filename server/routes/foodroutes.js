@@ -68,4 +68,24 @@ router.get('/delete/:id', protect, async (req, res) => {
   }
 });
 
+// Search route
+router.get('/search', protect, async (req, res) => {
+  const { q } = req.query; // Capture the search query from the query string
+  if (!q) {
+    return res.status(400).json({ message: 'Query is required.' });
+  }
+
+  try {
+    const foods = await Food.find({
+      name: { $regex: q, $options: 'i' }, // Case-insensitive partial match
+    });
+
+    res.json(foods); // Return the matching foods
+  } catch (err) {
+    console.error('Error fetching foods:', err.message);
+    res.status(500).json({ message: 'Error fetching foods.', error: err.message });
+  }
+});
+
+
 module.exports = router;

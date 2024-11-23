@@ -71,3 +71,16 @@
 .custom-footer a:hover {
   color: #d8b3ff !important;
 }
+
+
+.review {
+  background-color: rgb(154, 222, 218);
+}
+
+.review2 {
+  background-color: rgb(177, 244, 177);
+}
+
+.review3 {
+  background-color: rgb(249, 199, 206);
+}
