@@ -1,0 +1,35 @@
+<%- include('partials/_header') %>
+<main>
+  <div class="container mt-5">
+    <h1 class="text-center text-primary mb-4">Your Profile</h1>
+
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow">
+          <div class="card-body">
+            <h2 class="text-center">Hello, <%= user.name %>!</h2>
+            <ul class="list-group mt-4">
+              <li class="list-group-item">
+                <strong>Name:</strong> <%= user.name %>
+              </li>
+              <li class="list-group-item">
+                <strong>Email:</strong> <%= user.email %>
+              </li>
+              <li class="list-group-item">
+                <strong>Daily Calorie Goal:</strong> <%= user.dailyCalorieGoal %> kcal
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <a href="/foodroutes" class="btn btn-primary btn-lg">
+        <i class="fas fa-chart-line"></i> Go to Dashboard
+      </a>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/_footer') %>

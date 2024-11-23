@@ -9,16 +9,16 @@ const generateToken = (id) => {
 
 // Register User
 const registerUser = async (req, res) => {
-  const { name, email, password, role, dailyCalorieGoal } = req.body;
+  const { name, email, password, dailyCalorieGoal } = req.body;
 
   try {
     // Check if the user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(400).json({ message: 'A user with this email already exists.' });
     }
 
-    // Create new user
+    // Create a new user
     const user = await User.create({
       name,
       email,
@@ -28,19 +28,24 @@ const registerUser = async (req, res) => {
     });
 
     if (user) {
+      // Generate token
+      const token = generateToken(user._id);
+
+      // Redirect to profile after registration
       res.status(201).json({
         id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
-        dailyCalorieGoal: user.dailyCalorieGoal || 2000, // Default to 2000 if not set
-        token: generateToken(user._id),
+        dailyCalorieGoal: user.dailyCalorieGoal || 2000,
+        token,
+        redirectTo: '/userroutes/profile', // Redirect to profile
       });
     } else {
-      res.status(400).json({ message: 'Invalid user data' });
+      res.status(400).json({ message: 'Failed to create user. Please try again.' });
     }
   } catch (err) {
-    res.status(500).json({ message: 'Error registering user', error: err.message });
+    res.status(500).json({ message: 'Error registering user.', error: err.message });
   }
 };
 
@@ -49,23 +54,24 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Find the user by email
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
-      res.json({
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        dailyCalorieGoal: user.dailyCalorieGoal || 2000,
-        token: generateToken(user._id),
-      });
+      const token = generateToken(user._id);
+
+      // Set the token as a cookie
+      res
+        .cookie('token', token, {
+          httpOnly: true, // Makes the cookie inaccessible to JavaScript
+          secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+          maxAge: 30 * 24 * 60 * 60 * 1000, // Token expiration (30 days)
+        })
+        .redirect('/userroutes/profile'); // Redirect to the profile page after login
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
     }
   } catch (err) {
-    res.status(500).json({ message: 'Error logging in user', error: err.message });
+    res.status(500).json({ message: 'Error logging in user.', error: err.message });
   }
 };
 
@@ -73,15 +79,9 @@ const loginUser = async (req, res) => {
 const getUserProfile = async (req, res) => {
   try {
     const user = req.user; // User is already added to req by `protect` middleware
-    res.json({
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      dailyCalorieGoal: user.dailyCalorieGoal || 2000, // Default value if not set
-    });
+    res.render('profile', { user }); // Render profile.ejs with user data
   } catch (err) {
-    res.status(500).json({ message: 'Failed to fetch profile data', error: err.message });
+    res.status(500).render('error', { message: 'Failed to fetch profile data.', error: err.message });
   }
 };
 
@@ -92,7 +92,7 @@ const adminFunctionality = async (req, res) => {
     const users = await User.find();
     res.json(users);
   } catch (err) {
-    res.status(500).json({ message: 'Failed to perform admin action', error: err.message });
+    res.status(500).json({ message: 'Failed to perform admin action.', error: err.message });
   }
 };
 

@@ -28,6 +28,10 @@ const foodSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+  image: {
+    type: String, // Image filename (e.g., "apple.jpg")
+    required: [true, 'Image is required'],
+  },
 });
 
 module.exports = mongoose.model('Food', foodSchema);

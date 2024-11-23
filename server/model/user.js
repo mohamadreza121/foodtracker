@@ -5,7 +5,6 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: String, enum: ['basic', 'admin'], default: 'basic' }, // Add roles
   dailyCalorieGoal: { type: Number, default: 2000 }, // Optional user-specific setting
 });
 

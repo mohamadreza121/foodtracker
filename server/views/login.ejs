@@ -7,7 +7,8 @@
       <div class="col-md-6">
         <div class="card shadow">
           <div class="card-body">
-            <form action="/userroutes/login" method="POST">
+            <!-- Form without action or method to allow JavaScript handling -->
+            <form id="loginForm">
               <!-- Email Field -->
               <div class="mb-3">
                 <label for="email" class="form-label"><i class="fas fa-envelope"></i> Email</label>
@@ -45,8 +46,15 @@
     </div>
 
     <div class="text-center mt-4">
-      <p>Don't have an account? <a href="/userroutes/register" class="text-primary"><i class="fas fa-user-plus"></i> Register here</a></p>
+      <p>Don't have an account? 
+        <a href="/register" class="text-primary">
+          <i class="fas fa-user-plus"></i> Register here
+        </a>
+      </p>
     </div>
   </div>
 </main>
+
+<!-- JavaScript for login handling -->
+<script src="/js/login.js"></script>
 <%- include('partials/_footer')  %>

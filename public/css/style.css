@@ -1,0 +1,48 @@
+.food-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+/* Custom Navbar */
+.custom-navbar {
+  background-color: #6a0dad !important;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  color: #fff !important;
+  font-size: 16px;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+  color: #d8b3ff !important;
+}
+
+.navbar-dark .navbar-brand {
+  font-weight: bold;
+  color: #fff !important;
+}
+
+.navbar-dark .navbar-toggler {
+  border-color: #d8b3ff !important;
+}
+
+.navbar-dark .navbar-toggler-icon {
+  background-color: #fff !important;
+}
+
+/* Custom Footer */
+.custom-footer {
+  background-color: #6a0dad !important;
+  color: #fff !important;
+}
+
+.custom-footer a {
+  color: #fff !important;
+}
+
+.custom-footer a:hover {
+  color: #d8b3ff !important;
+}
