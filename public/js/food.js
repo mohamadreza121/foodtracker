@@ -1,7 +1,7 @@
 document.getElementById('searchButton').addEventListener('click', async () => {
-  const query = document.getElementById('searchInput').value.trim(); // Get the search input
+  const query = document.getElementById('searchInput').value.trim();
   if (!query) {
-    return alert('Please enter a search term.'); // Warn if the input is empty
+    return alert('Please enter a search term.');
   }
 
   try {
@@ -9,7 +9,6 @@ document.getElementById('searchButton').addEventListener('click', async () => {
     if (!response.ok) throw new Error('Failed to fetch search results.');
 
     const results = await response.json();
-
     const searchResults = document.getElementById('searchResults');
     searchResults.innerHTML = '';
 
@@ -18,7 +17,6 @@ document.getElementById('searchButton').addEventListener('click', async () => {
       return;
     }
 
-    // Populate search results
     results.forEach(food => {
       const li = document.createElement('li');
       li.className = 'list-group-item d-flex justify-content-between align-items-center';
@@ -39,6 +37,11 @@ document.getElementById('searchButton').addEventListener('click', async () => {
       button.addEventListener('click', async (event) => {
         const name = event.target.getAttribute('data-name');
         const calories = event.target.getAttribute('data-calories');
+
+        if (!name || !calories) {
+          alert('Invalid food data. Please try again.');
+          return;
+        }
 
         try {
           const addResponse = await fetch('/foodroutes/add', {
