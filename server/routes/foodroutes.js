@@ -31,30 +31,25 @@ router.get('/', protect, async (req, res) => {
   }
 });
 
-// Updated API Route: Add a new food entry
+// API Route: Add a new food entry
 router.post('/add', protect, async (req, res) => {
   try {
     const { name, calories } = req.body;
-
-    if (!name || !calories) {
-      return res.status(400).json({ message: 'Name and calories are required.' });
-    }
-
-    const sanitizedName = name.trim().toLowerCase();
     const today = new Date().toISOString().split('T')[0];
 
+    // Create a new food entry
     await Food.create({
-      name: sanitizedName,
-      calories: Number(calories), // Ensure calories are stored as numbers
+      name,
+      calories,
       date: today,
       userId: req.user._id,
-      image: `${sanitizedName.replace(/\s+/g, '_')}.jpg`,
+      image: `${name.toLowerCase().replace(/\s+/g, '')}.jpg`, // Remove spaces completely
     });
 
-    res.status(201).json({ message: 'Food added successfully!' });
+    res.redirect('/foodroutes'); // Redirect back to the dashboard
   } catch (error) {
     console.error('Error adding food:', error.message);
-    res.status(500).json({ message: 'Failed to add food.', error: error.message });
+    res.status(400).render('error', { message: 'Failed to add food.', error });
   }
 });
 
@@ -91,5 +86,6 @@ router.get('/search', protect, async (req, res) => {
     res.status(500).json({ message: 'Error fetching foods.', error: err.message });
   }
 });
+
 
 module.exports = router;
