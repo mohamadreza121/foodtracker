@@ -33,6 +33,31 @@
   background-color: #fff !important;
 }
 
+.navbar-collapse .nav-link {
+  color: #fff !important;
+}
+
+.navbar-collapse .nav-link:hover {
+  color: #d8b3ff !important;
+}
+
+.nav-bar-icon {
+  color: #6a0dad !important;
+  margin-top: 5px;
+  transition: 0.3s ease;
+
+}
+
+.nav-bar-icon:hover {
+  transform: scale(1.2);
+  
+}
+
+
+
+
+
+
 /* Custom Footer */
 .custom-footer {
   background-color: #6a0dad !important;
