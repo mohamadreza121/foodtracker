@@ -27,12 +27,18 @@
           <li class="nav-item">
             <a class="nav-link" href="/foodroutes"><i class="fas fa-home"></i> Dashboard</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/userroutes/profile"><i class="fas fa-user"></i> Profile</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/userroutes/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-          </li>
+          <% if (user) { %>
+            <li class="nav-item">
+              <a class="nav-link" href="/userroutes/profile"><i class="fas fa-user"></i> Profile</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/userroutes/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </li>
+          <% } else { %>
+            <li class="nav-item">
+              <a class="nav-link" href="/userroutes/login"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+            </li>
+          <% } %>
         </ul>
       </div>
     </div>

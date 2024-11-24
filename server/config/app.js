@@ -1,4 +1,5 @@
 const express = require('express');
+const { setUser } = require('../middleware/authmiddleware');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -24,13 +25,22 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(setUser);
 app.use(express.static(path.join(__dirname, '../../public')));
 app.use(express.static(path.join(__dirname, '../../node_modules')));
+
+// Make user available in all views
+app.use((req, res, next) => {
+  res.locals.user = req.user || null; // Pass `req.user` to all views or null if not logged in
+  next();
+});
+
 
 // Import routers
 const indexRouter = require('../routes/index');
 const userRouter = require('../routes/userroutes');
 const foodRouter = require('../routes/foodroutes');
+const { required } = require('joi');
 
 // Use routers
 app.use('/', indexRouter);

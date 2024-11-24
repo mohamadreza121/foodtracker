@@ -5,25 +5,27 @@ const Food = require('../model/food');
 const router = express.Router();
 
 // Route to render the food tracker page with required data
-router.get('/', protect, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    // Get today's date in YYYY-MM-DD format
     const today = new Date().toISOString().split('T')[0];
 
-    // Fetch all foods for the logged-in user for today
-    const foods = await Food.find({ userId: req.user._id, date: today });
+    let foods = [];
+    let totalCalories = 0;
+    let remainingCalories = 0;
 
-    // Calculate total and remaining calories
-    const totalCalories = foods.reduce((sum, food) => sum + food.calories, 0);
-    const dailyGoal = req.user.dailyCalorieGoal || 2000; // Default to 2000 kcal
-    const remainingCalories = Math.max(0, dailyGoal - totalCalories);
+    // If the user is logged in, fetch their data
+    if (req.user) {
+      foods = await Food.find({ userId: req.user._id, date: today });
+      totalCalories = foods.reduce((sum, food) => sum + food.calories, 0);
+      const dailyGoal = req.user.dailyCalorieGoal || 2000;
+      remainingCalories = Math.max(0, dailyGoal - totalCalories);
+    }
 
-    // Render the `food.ejs` template with data
     res.render('food', {
       foods,
       totalCalories,
       remainingCalories,
-      user: req.user, // Pass user for additional context if needed
+      user: req.user || null, // Pass user for additional context
     });
   } catch (error) {
     console.error('Error fetching food data:', error.message);
@@ -31,34 +33,38 @@ router.get('/', protect, async (req, res) => {
   }
 });
 
-// API Route: Add a new food entry
+// API Route: Add a new food entry (requires login)
 router.post('/add', protect, async (req, res) => {
   try {
     const { name, calories } = req.body;
+
+    if (!name || !calories) {
+      return res.status(400).json({ message: 'Name and calories are required.' });
+    }
+
+    const sanitizedName = name.trim().toLowerCase();
     const today = new Date().toISOString().split('T')[0];
 
-    // Create a new food entry
     await Food.create({
-      name,
-      calories,
+      name: sanitizedName,
+      calories: Number(calories),
       date: today,
       userId: req.user._id,
-      image: `${name.toLowerCase().replace(/\s+/g, '')}.jpg`, // Remove spaces completely
+      image: `${sanitizedName.replace(/\s+/g, '_')}.jpg`,
     });
 
-    res.redirect('/foodroutes'); // Redirect back to the dashboard
+    res.status(201).json({ message: 'Food added successfully!' });
   } catch (error) {
     console.error('Error adding food:', error.message);
-    res.status(400).render('error', { message: 'Failed to add food.', error });
+    res.status(500).json({ message: 'Failed to add food.', error: error.message });
   }
 });
 
-// API Route: Delete a food entry
+// API Route: Delete a food entry (requires login)
 router.get('/delete/:id', protect, async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Delete the specified food entry
     await Food.findByIdAndDelete(id);
 
     res.redirect('/foodroutes'); // Redirect back to the dashboard
@@ -69,7 +75,7 @@ router.get('/delete/:id', protect, async (req, res) => {
 });
 
 // Search route
-router.get('/search', protect, async (req, res) => {
+router.get('/search', async (req, res) => {
   const { q } = req.query; // Capture the search query from the query string
   if (!q) {
     return res.status(400).json({ message: 'Query is required.' });
@@ -86,6 +92,5 @@ router.get('/search', protect, async (req, res) => {
     res.status(500).json({ message: 'Error fetching foods.', error: err.message });
   }
 });
-
 
 module.exports = router;
