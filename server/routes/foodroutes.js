@@ -45,20 +45,22 @@ router.post('/add', protect, async (req, res) => {
     const sanitizedName = name.trim().toLowerCase();
     const today = new Date().toISOString().split('T')[0];
 
-    await Food.create({
+    const newFood = await Food.create({
       name: sanitizedName,
       calories: Number(calories),
       date: today,
       userId: req.user._id,
-      image: `${sanitizedName.replace(/\s+/g, '_')}.jpg`,
+      image: `${sanitizedName.replace(/\s+/g, '')}.jpg`,
     });
 
-    res.status(201).json({ message: 'Food added successfully!' });
+    res.status(201).json(newFood); // Send the newly added food back to the client
   } catch (error) {
     console.error('Error adding food:', error.message);
     res.status(500).json({ message: 'Failed to add food.', error: error.message });
   }
 });
+
+
 
 // API Route: Delete a food entry (requires login)
 router.get('/delete/:id', protect, async (req, res) => {
