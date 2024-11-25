@@ -30,8 +30,8 @@ document.getElementById('addFoodForm').addEventListener('submit', async (event) 
       document.getElementById('name').value = '';
       document.getElementById('calories').value = '';
 
-      // Dynamically update the food list without refreshing the page
-      const foodList = document.querySelector('.list-group');
+      // Dynamically update the Foods Consumed section
+      const foodList = document.querySelector('.list-group'); // Select the list under Foods Consumed
       const newFoodItem = document.createElement('li');
       newFoodItem.className = 'list-group-item d-flex justify-content-between align-items-center';
       newFoodItem.innerHTML = `
@@ -43,7 +43,13 @@ document.getElementById('addFoodForm').addEventListener('submit', async (event) 
           <i class="fas fa-trash-alt"></i> Delete
         </a>
       `;
-      foodList.appendChild(newFoodItem);
+      foodList.appendChild(newFoodItem); // Append the new item to the correct list
+
+      // Reload the page after the first food is added
+      if (!localStorage.getItem('foodAddedOnce')) {
+        localStorage.setItem('foodAddedOnce', 'true');
+        window.location.reload(); // Refresh the page
+      }
     } else {
       const errorData = await response.json();
       messageDiv.textContent = errorData.message || 'Failed to add food.';
